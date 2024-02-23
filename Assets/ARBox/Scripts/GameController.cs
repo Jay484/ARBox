@@ -9,6 +9,9 @@ public class GameController : MonoBehaviour
     [HideInInspector]
     public GameObject highlightedGameObject = null;
 
+    [HideInInspector]
+    public GameObject selectedGameObject = null;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,15 +36,15 @@ public class GameController : MonoBehaviour
         {
             // A hit occurred. You can access information about the hit using the 'hit' variable.
             // For example, you can get the name of the object hit:
-            string hitObjectName = hit.collider.gameObject.name;
-            if (highlightedGameObject != hit.collider.gameObject)
+            GameObject currObject = hit.collider.gameObject;
+
+            if (highlightedGameObject != currObject)
             {
-                Highlight(highlightedGameObject, false);
-                highlightedGameObject = hit.collider.gameObject;
+                if(highlightedGameObject != null)
+                    Highlight(highlightedGameObject, false);
+                highlightedGameObject = currObject;
+                Highlight(highlightedGameObject, true);
             }
-            Highlight(highlightedGameObject, true);
-
-
 
             if (Keyboard.current.jKey.isPressed)
             {
@@ -66,56 +69,106 @@ public class GameController : MonoBehaviour
             else if (Keyboard.current.dKey.isPressed)
             {
                 MoveBack(highlightedGameObject);
+            }else if (Keyboard.current.hKey.isPressed)
+            {
+                ObjectSelected(currObject);
             }
-
-
-
-            Debug.Log("testJay Ray hit: " + hitObjectName);
 
             // You can also perform actions based on the hit, such as moving the hit object, triggering events, etc.
         }
         else
         {
             // No hit occurred within the specified distance.
-            if (Keyboard.current.hKey.isPressed && highlightedGameObject != null)
+            if (highlightedGameObject != null && highlightedGameObject != selectedGameObject)
             {
                 Highlight(highlightedGameObject, false);
+                highlightedGameObject = null;
             }
+        }
+    }
+
+    void ObjectSelected(GameObject gameObject)
+    {
+        if(selectedGameObject == null)
+        {
+            selectedGameObject = gameObject;
+            Highlight(selectedGameObject, true);
+            return;
+        }
+        Highlight(selectedGameObject, false);
+        if(selectedGameObject == gameObject)
+        {
+            selectedGameObject = null;
+        }
+        else
+        {
+            selectedGameObject = gameObject;
+            Highlight(selectedGameObject, true);
         }
     }
 
     void MoveUp(GameObject gameObject, float moveSpeed = 0.1f)
     {
+        if (gameObject == null)
+            return;
         gameObject.transform.Translate(mainCameraTransform.up * moveSpeed * Time.deltaTime);
 
     }
 
     void MoveDown(GameObject gameObject, float moveSpeed = 0.5f)
     {
+        if (gameObject == null)
+            return;
         gameObject.transform.Translate(mainCameraTransform.up * -1 * moveSpeed * Time.deltaTime);
     }
 
     void MoveRight(GameObject gameObject, float moveSpeed = 0.5f)
     {
+        if (gameObject == null)
+            return;
         gameObject.transform.Translate(mainCameraTransform.right * moveSpeed * Time.deltaTime);
     }
 
     void MoveLeft(GameObject gameObject, float moveSpeed = 0.5f)
     {
+        if (gameObject == null)
+            return;
         gameObject.transform.Translate(mainCameraTransform.right * -1 * moveSpeed * Time.deltaTime);
     }
 
     void MoveForward(GameObject gameObject, float moveSpeed = 0.5f)
     {
+        if (gameObject == null)
+            return;
         gameObject.transform.Translate(mainCameraTransform.forward * moveSpeed * Time.deltaTime);
     }
     void MoveBack(GameObject gameObject, float moveSpeed = 0.5f)
     {
+        if (gameObject == null)
+            return;
         gameObject.transform.Translate(mainCameraTransform.forward * -1 * moveSpeed * Time.deltaTime);
     }
 
-    private void Highlight(GameObject gameObject, bool setHighLigh = true)
+    private void Highlight(GameObject gameObject, bool setHighLight = true)
     {
-
+        if (gameObject == null)
+            return;
+        var renderer = gameObject.GetComponent<Renderer>();
+        if (renderer!=null && setHighLight)
+        {
+            float emissionIntensity = renderer.material.GetColor("emissiveFactor").b / Color.white.b;
+            DebugDjay.Log("focused before"+emissionIntensity);
+            emissionIntensity += 5;
+            DebugDjay.Log("focused after" + emissionIntensity);
+            renderer.material.SetColor("emissiveFactor", Color.white * emissionIntensity);
+        }
+        else
+        {
+            float emissionIntensity = renderer.material.GetColor("emissiveFactor").b / Color.white.b;
+            DebugDjay.Log("not before" + emissionIntensity);
+            emissionIntensity -= 5;
+            DebugDjay.Log("not after" + emissionIntensity);
+            renderer.material.SetColor("emissiveFactor", Color.white * emissionIntensity);
+        }
     }
 }

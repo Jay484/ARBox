@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.ARFoundation;
+using System.IO;
+using GLTFast;
 
 public class ARBoxObjectSpawner : MonoBehaviour
 {
@@ -10,14 +12,21 @@ public class ARBoxObjectSpawner : MonoBehaviour
     [SerializeField]
     GameObject gameObjectPrefab;
 
+    [SerializeField]
+    string glbFilePath;
+
+
 
     Vector3 rayOrigin;// Use the current object's position as the origin
     Vector3 rayDirection; // Use the forward direction of the object (you can adjust this based on your needs)
     float spawnDistance = .5f;
 
+    private GltfImport gltf;
+
     // Start is called before the first frame update
     void Start()
     {
+        gltf = new GltfImport();
     }
 
     // Update is called once per frame
@@ -31,16 +40,39 @@ public class ARBoxObjectSpawner : MonoBehaviour
         {
             Debug.Log("testJaySpawn: u key pressed");
             if (!isRayHittingObject())
-                SpawnObject(gameObjectPrefab, spawnDistance);
+                SpawnObject(glbFilePath, spawnDistance);
         }
     }
 
-    public void SpawnObject(GameObject prefab, float spawnDistance)
+    private async void SpawnObject(string glbFilePath, float spawnDistance)
     {
         Vector3 spawnPosition = Camera.main.transform.position + Camera.main.transform.forward * spawnDistance;
+        var absGlbFilePath = "file://"+Application.streamingAssetsPath+"/"+ glbFilePath;
+        Debug.Log($"testJay: file path {absGlbFilePath}");
 
-        // Spawn the object at the calculated position
-        Instantiate(prefab , spawnPosition, Quaternion.identity);
+        var ActiveObject = new GameObject();
+
+         Vector3 desiredScale = new Vector3(.05f, .05f, .05f); // Desired scale of the object
+
+        // Set the object's new scale
+        ActiveObject.transform.localScale = desiredScale;
+        ActiveObject.transform.position = Camera.main.transform.position;
+        //var gltfcomponent = ActiveObject.AddComponent<GltfAsset>();
+        //gltfcomponent.Url = absGlbFilePath;
+
+        gltf = new GltfImport();
+        await gltf.Load(absGlbFilePath);
+        var instantiator = new CustomGameObjectInstantiator(gltf, ActiveObject.transform);
+        var success = await gltf.InstantiateMainSceneAsync(instantiator);
+        if (success)
+        {
+            Debug.Log("testJay: Success creating object");
+        }
+        else
+        {
+            Debug.Log("testJay: Failed creating object");
+        }
+
     }
 
     private bool isRayHittingObject()
