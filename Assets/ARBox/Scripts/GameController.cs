@@ -69,8 +69,9 @@ public class GameController : MonoBehaviour
             else if (Keyboard.current.dKey.isPressed)
             {
                 MoveBack(highlightedGameObject);
-            }else if (Keyboard.current.hKey.isPressed)
+            }else if (Keyboard.current.hKey.wasPressedThisFrame)
             {
+                DebugDjay.Log("H key pressed");
                 ObjectSelected(currObject);
             }
 
@@ -84,11 +85,54 @@ public class GameController : MonoBehaviour
                 Highlight(highlightedGameObject, false);
                 highlightedGameObject = null;
             }
+            if (Keyboard.current.hKey.wasPressedThisFrame)
+            {
+                ObjectSelected(null);
+            }
         }
+
+
+        //UpdateRotationAndScaleOfHighlightedObject();
+        UpdateScaleSelectedInfo();
+    }
+
+    private void  UpdateRotationAndScaleOfHighlightedObject()
+    {
+        if (highlightedGameObject == null)
+            return;
+
+        //var pose = new Vector3(0, bounds.max.y, 0) ;
+
+    }
+
+    private void UpdateScaleSelectedInfo()
+    {
+        if(highlightedGameObject == null)
+        {
+            return;
+        }
+
+        var textBox = CustomGameObjectInstantiator.GetTextBox(highlightedGameObject);
+
+        var parentBounds = BoundsUtil.GetBounds(highlightedGameObject);
+
+        DebugDjay.Log("Bounds: " + parentBounds.max.ToString());
+        var offset = new Vector3(0, 2, 0);
+        var parentTopPosition = new Vector3(parentBounds.center.x, parentBounds.max.y, parentBounds.center.z);
+        textBox.transform.localPosition = parentTopPosition + offset;
+        textBox.transform.rotation = Camera.main.transform.rotation;
+        textBox.transform.localScale = BoundsUtil.GlobalToLocalScale(highlightedGameObject.transform, new Vector3(1f, 1f, 1f));
     }
 
     void ObjectSelected(GameObject gameObject)
     {
+        if(gameObject == null)
+        {
+            Highlight(selectedGameObject, false);
+            selectedGameObject = null;
+            return;
+        }
+
         if(selectedGameObject == null)
         {
             selectedGameObject = gameObject;
@@ -96,7 +140,8 @@ public class GameController : MonoBehaviour
             return;
         }
         Highlight(selectedGameObject, false);
-        if(selectedGameObject == gameObject)
+        SetTextBoxVisibility(selectedGameObject, false);
+        if (selectedGameObject == gameObject)
         {
             selectedGameObject = null;
         }
@@ -158,7 +203,7 @@ public class GameController : MonoBehaviour
         {
             float emissionIntensity = renderer.material.GetColor("emissiveFactor").b / Color.white.b;
             DebugDjay.Log("focused before"+emissionIntensity);
-            emissionIntensity += 5;
+            emissionIntensity += 2;
             DebugDjay.Log("focused after" + emissionIntensity);
             renderer.material.SetColor("emissiveFactor", Color.white * emissionIntensity);
         }
@@ -166,9 +211,26 @@ public class GameController : MonoBehaviour
         {
             float emissionIntensity = renderer.material.GetColor("emissiveFactor").b / Color.white.b;
             DebugDjay.Log("not before" + emissionIntensity);
-            emissionIntensity -= 5;
+            emissionIntensity -= 2;
             DebugDjay.Log("not after" + emissionIntensity);
             renderer.material.SetColor("emissiveFactor", Color.white * emissionIntensity);
+            
+        }
+
+        if (gameObject != selectedGameObject)
+        {
+            SetTextBoxVisibility(gameObject, setHighLight);
         }
     }
+
+    private void SetTextBoxVisibility(GameObject gameObject, bool visible)
+    {
+        var textBox = CustomGameObjectInstantiator.GetTextBox(gameObject);
+        if (textBox != null)
+            textBox.SetActive(visible);
+    }
+
+
+
+
 }

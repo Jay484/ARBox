@@ -1,16 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.XR.ARFoundation;
-using System.IO;
 using GLTFast;
 
 public class ARBoxObjectSpawner : MonoBehaviour
 {
 
     [SerializeField]
-    GameObject gameObjectPrefab;
+    GameObject demoTextPrefab;
 
     [SerializeField]
     string glbFilePath;
@@ -19,7 +15,7 @@ public class ARBoxObjectSpawner : MonoBehaviour
 
     Vector3 rayOrigin;// Use the current object's position as the origin
     Vector3 rayDirection; // Use the forward direction of the object (you can adjust this based on your needs)
-    float spawnDistance = .5f;
+    float spawnDistance = 1f;
 
     private GltfImport gltf;
 
@@ -44,15 +40,16 @@ public class ARBoxObjectSpawner : MonoBehaviour
         }
     }
 
-    private async void SpawnObject(string glbFilePath, float spawnDistance)
+    public async void SpawnObject(string glbFilePath, float spawnDistance)
     {
         Vector3 spawnPosition = Camera.main.transform.position + Camera.main.transform.forward * spawnDistance;
-        var absGlbFilePath = "file://"+Application.streamingAssetsPath+"/"+ glbFilePath;
+        var absGlbFilePath = "file://" + Application.streamingAssetsPath + "/" + glbFilePath;
         Debug.Log($"testJay: file path {absGlbFilePath}");
 
         var ActiveObject = new GameObject();
 
-         Vector3 desiredScale = new Vector3(.05f, .05f, .05f); // Desired scale of the object
+
+        Vector3 desiredScale = new(.05f, .05f, .05f); // Desired scale of the object
 
         // Set the object's new scale
         ActiveObject.transform.localScale = desiredScale;
@@ -62,10 +59,14 @@ public class ARBoxObjectSpawner : MonoBehaviour
 
         gltf = new GltfImport();
         await gltf.Load(absGlbFilePath);
-        var instantiator = new CustomGameObjectInstantiator(gltf, ActiveObject.transform);
+        var instantiator = new CustomGameObjectInstantiator(gltf, ActiveObject.transform, demoTextPrefab);
+        //var instantiator = new GameObjectInstantiator(gltf, ActiveObject.transform);
         var success = await gltf.InstantiateMainSceneAsync(instantiator);
         if (success)
         {
+            var legacyAnimation = instantiator.SceneInstance.LegacyAnimation;
+            if (legacyAnimation != null)
+                legacyAnimation.Play();
             Debug.Log("testJay: Success creating object");
         }
         else
