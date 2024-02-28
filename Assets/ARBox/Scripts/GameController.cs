@@ -92,22 +92,13 @@ public class GameController : MonoBehaviour
         }
 
 
-        //UpdateRotationAndScaleOfHighlightedObject();
-        UpdateScaleSelectedInfo();
+        UpdateTransformOfHighlightedInfo();
+        UpdateTransformOfSelectedInfo();
     }
 
-    private void  UpdateRotationAndScaleOfHighlightedObject()
+    private void  UpdateTransformOfHighlightedInfo()
     {
         if (highlightedGameObject == null)
-            return;
-
-        //var pose = new Vector3(0, bounds.max.y, 0) ;
-
-    }
-
-    private void UpdateScaleSelectedInfo()
-    {
-        if(highlightedGameObject == null)
         {
             return;
         }
@@ -117,11 +108,30 @@ public class GameController : MonoBehaviour
         var parentBounds = BoundsUtil.GetBounds(highlightedGameObject);
 
         DebugDjay.Log("Bounds: " + parentBounds.max.ToString());
-        var offset = new Vector3(0, 2, 0);
+        var offset = new Vector3(0, 2, 0) + Camera.main.transform.up;
         var parentTopPosition = new Vector3(parentBounds.center.x, parentBounds.max.y, parentBounds.center.z);
         textBox.transform.localPosition = parentTopPosition + offset;
         textBox.transform.rotation = Camera.main.transform.rotation;
         textBox.transform.localScale = BoundsUtil.GlobalToLocalScale(highlightedGameObject.transform, new Vector3(1f, 1f, 1f));
+    }
+
+    private void UpdateTransformOfSelectedInfo()
+    {
+        if(selectedGameObject == null)
+        {
+            return;
+        }
+
+        var textBox = CustomGameObjectInstantiator.GetTextBox(selectedGameObject);
+
+        var parentBounds = BoundsUtil.GetBounds(selectedGameObject);
+
+        DebugDjay.Log("Bounds: " + parentBounds.max.ToString());
+        var offset = new Vector3(0, 2, 0) + Camera.main.transform.up;
+        var parentTopPosition = new Vector3(parentBounds.center.x, parentBounds.max.y, parentBounds.center.z);
+        textBox.transform.localPosition = parentTopPosition + offset;
+        textBox.transform.rotation = Camera.main.transform.rotation;
+        textBox.transform.localScale = BoundsUtil.GlobalToLocalScale(selectedGameObject.transform, new Vector3(1f, 1f, 1f));
     }
 
     void ObjectSelected(GameObject gameObject)
