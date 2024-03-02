@@ -4,6 +4,9 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
 
+    [SerializeField]
+    GameObject textPrefab;
+
     private Transform mainCameraTransform;
 
     [HideInInspector]
@@ -12,27 +15,34 @@ public class GameController : MonoBehaviour
     [HideInInspector]
     public GameObject selectedGameObject = null;
 
+    private ARBoxObjectSpawner aRBoxObjectSpawner;
+    private GLBModelUtil glbModel = null;
+
+    public float spawnDistance = 0f;
+
     // Start is called before the first frame update
     void Start()
     {
         mainCameraTransform = Camera.main.transform;
         transform.parent = mainCameraTransform;
+        aRBoxObjectSpawner = new();
+        glbModel = new GLBModelUtil("SolarSystem");
     }
 
     // Update is called once per frame
     void Update()
     {
         // Define the ray origin and direction
-
-        Vector3 rayOrigin = Camera.main.transform.position; // Use the current object's position as the origin
-        Vector3 rayDirection = transform.forward; // Use the forward direction of the object (you can adjust this based on your needs)
-
+        // Use the current object's position as the origin
+        // Use the forward direction of the object (you can adjust this based on your needs)
+        Ray ray = new(Camera.main.transform.position, transform.forward);
+        Debug.DrawLine(ray.origin, ray.direction*10, Color.blue);
 
         // Create a RaycastHit variable to store information about the hit
         RaycastHit hit;
 
         // Perform the raycast
-        if (Physics.Raycast(rayOrigin, rayDirection, out hit))
+        if (Physics.Raycast(ray, out hit))
         {
             // A hit occurred. You can access information about the hit using the 'hit' variable.
             // For example, you can get the name of the object hit:
@@ -94,6 +104,23 @@ public class GameController : MonoBehaviour
 
         UpdateTransformOfHighlightedInfo();
         UpdateTransformOfSelectedInfo();
+        SpawnObject();
+
+    }
+
+    private void SpawnObject()
+    {
+        if (Keyboard.current.uKey.wasPressedThisFrame)
+        {
+            Debug.Log("testJaySpawn: u key pressed");
+            if (!aRBoxObjectSpawner.isRayHittingObject(spawnDistance))
+            {
+                if (glbModel != null)
+                {
+                    aRBoxObjectSpawner.SpawnObject(glbModel, spawnDistance, textPrefab);
+                }
+            }
+        }
     }
 
     private void  UpdateTransformOfHighlightedInfo()
@@ -108,11 +135,8 @@ public class GameController : MonoBehaviour
         var parentBounds = BoundsUtil.GetBounds(highlightedGameObject);
 
         DebugDjay.Log("Bounds: " + parentBounds.max.ToString());
-        var offset = new Vector3(0, 2, 0) + Camera.main.transform.up;
-        var parentTopPosition = new Vector3(parentBounds.center.x, parentBounds.max.y, parentBounds.center.z);
-        textBox.transform.localPosition = parentTopPosition + offset;
         textBox.transform.rotation = Camera.main.transform.rotation;
-        textBox.transform.localScale = BoundsUtil.GlobalToLocalScale(highlightedGameObject.transform, new Vector3(1f, 1f, 1f));
+        //textBox.transform.localScale = BoundsUtil.GlobalToLocalScale(highlightedGameObject.transform, new Vector3(1f, 1f, 1f));
     }
 
     private void UpdateTransformOfSelectedInfo()
@@ -129,9 +153,9 @@ public class GameController : MonoBehaviour
         DebugDjay.Log("Bounds: " + parentBounds.max.ToString());
         var offset = new Vector3(0, 2, 0) + Camera.main.transform.up;
         var parentTopPosition = new Vector3(parentBounds.center.x, parentBounds.max.y, parentBounds.center.z);
-        textBox.transform.localPosition = parentTopPosition + offset;
+        //textBox.transform.localPosition = parentTopPosition + offset;
         textBox.transform.rotation = Camera.main.transform.rotation;
-        textBox.transform.localScale = BoundsUtil.GlobalToLocalScale(selectedGameObject.transform, new Vector3(1f, 1f, 1f));
+        //textBox.transform.localScale = BoundsUtil.GlobalToLocalScale(selectedGameObject.transform, new Vector3(1f, 1f, 1f));
     }
 
     void ObjectSelected(GameObject gameObject)

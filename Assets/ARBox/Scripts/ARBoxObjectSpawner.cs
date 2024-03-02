@@ -1,26 +1,25 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using GLTFast;
 
-public class ARBoxObjectSpawner : MonoBehaviour
+public class ARBoxObjectSpawner
 {
 
-    [SerializeField]
-    GameObject demoTextPrefab;
+    //[SerializeField]
+    //GameObject demoTextPrefab;
 
-    [SerializeField]
-    string glbFilePath;
+    //[SerializeField]
+    //string glbFilePath;
 
 
 
-    Vector3 rayOrigin;// Use the current object's position as the origin
-    Vector3 rayDirection; // Use the forward direction of the object (you can adjust this based on your needs)
-    float spawnDistance = 1f;
+    //Vector3 rayOrigin;// Use the current object's position as the origin
+    //Vector3 rayDirection; // Use the forward direction of the object (you can adjust this based on your needs)
+    //float spawnDistance = 1f;
 
     private GltfImport gltf;
 
     // Start is called before the first frame update
-    void Start()
+    public ARBoxObjectSpawner()
     {
         gltf = new GltfImport();
     }
@@ -29,44 +28,44 @@ public class ARBoxObjectSpawner : MonoBehaviour
     void Update()
     {
 
-        rayOrigin = Camera.main.transform.position;
-        rayDirection = transform.forward;
+        //rayOrigin = Camera.main.transform.position;
+        //rayDirection = transform.forward;
 
-        if (Keyboard.current.uKey.wasPressedThisFrame)
-        {
-            Debug.Log("testJaySpawn: u key pressed");
-            if (!isRayHittingObject())
-                SpawnObject(glbFilePath, spawnDistance);
-        }
+        //if (Keyboard.current.uKey.wasPressedThisFrame)
+        //{
+        //    Debug.Log("testJaySpawn: u key pressed");
+        //    if (!isRayHittingObject())
+        //        SpawnObject(glbFilePath, spawnDistance, demoTextPrefab);
+        //}
     }
 
-    public async void SpawnObject(string glbFilePath, float spawnDistance)
+    public async void SpawnObject(GLBModelUtil gLBModel, float spawnDistance, GameObject demoTextPrefab)
     {
+        DebugDjay.Log(gLBModel.GetGLBModelPath());
         Vector3 spawnPosition = Camera.main.transform.position + Camera.main.transform.forward * spawnDistance;
-        var absGlbFilePath = "file://" + Application.streamingAssetsPath + "/" + glbFilePath;
-        Debug.Log($"testJay: file path {absGlbFilePath}");
-
-        var ActiveObject = new GameObject();
-
-
         Vector3 desiredScale = new(.05f, .05f, .05f); // Desired scale of the object
 
+        var ActiveObject = new GameObject();
         // Set the object's new scale
+
+
         ActiveObject.transform.localScale = desiredScale;
-        ActiveObject.transform.position = Camera.main.transform.position;
-        //var gltfcomponent = ActiveObject.AddComponent<GltfAsset>();
-        //gltfcomponent.Url = absGlbFilePath;
+        ActiveObject.transform.position = spawnPosition;
 
         gltf = new GltfImport();
-        await gltf.Load(absGlbFilePath);
-        var instantiator = new CustomGameObjectInstantiator(gltf, ActiveObject.transform, demoTextPrefab);
+        var glbData = await ObjectRepo.GetGlbData(gLBModel.GetGLBJsonPath());
+        await gltf.Load(gLBModel.GetGLBModelPath());
+        var instantiator = new CustomGameObjectInstantiator(gltf, ActiveObject.transform, demoTextPrefab, glbData);
         //var instantiator = new GameObjectInstantiator(gltf, ActiveObject.transform);
         var success = await gltf.InstantiateMainSceneAsync(instantiator);
         if (success)
         {
             var legacyAnimation = instantiator.SceneInstance.LegacyAnimation;
             if (legacyAnimation != null)
+            {
+                legacyAnimation.wrapMode = WrapMode.Once;
                 legacyAnimation.Play();
+            }
             Debug.Log("testJay: Success creating object");
         }
         else
@@ -76,10 +75,9 @@ public class ARBoxObjectSpawner : MonoBehaviour
 
     }
 
-    private bool isRayHittingObject()
+    public bool isRayHittingObject(float spawnDistance)
     {
-        if(Physics.Raycast(rayOrigin, rayDirection, spawnDistance))
-            Debug.Log("testJaySpawn: Ray is hitting the object");
-        return Physics.Raycast(rayOrigin, rayDirection, spawnDistance);
+        var cameraTransform = Camera.main.transform;
+        return Physics.Raycast(cameraTransform.position, cameraTransform.forward, spawnDistance);
     }
 }
