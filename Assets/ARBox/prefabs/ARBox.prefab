@@ -111,8 +111,8 @@ Transform:
   m_GameObject: {fileID: 3477175024082774147}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0.7071068, w: 0}
-  m_LocalPosition: {x: -5.27, y: 0, z: 10}
-  m_LocalScale: {x: 1, y: 0.0007496252, z: 0.5622189}
+  m_LocalPosition: {x: -5.77, y: 0, z: 10}
+  m_LocalScale: {x: 0.9, y: 0.00067466265, z: 0.505997}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8238024986182170576}
@@ -217,8 +217,8 @@ Transform:
   m_GameObject: {fileID: 4372734003455769666}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0.7071068, w: 0}
-  m_LocalPosition: {x: 5.27, y: 0, z: 10}
-  m_LocalScale: {x: 1, y: 0.0007496252, z: 0.5622189}
+  m_LocalPosition: {x: 5.77, y: 0, z: 10}
+  m_LocalScale: {x: 0.9, y: 0.00067466265, z: 0.505997}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 8238024986182170576}
@@ -445,7 +445,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5604541803174591361}
   - component: {fileID: 1390583008899651421}
-  - component: {fileID: 8300403521441257618}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -481,20 +480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6da3bac108ad24688995765f3920cf3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textPrefab: {fileID: 0}
   highlightedGameObject: {fileID: 0}
   selectedGameObject: {fileID: 0}
---- !u!114 &8300403521441257618
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6517933071255879988}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 004e1926f1556405dbb3e13cf4a5f169, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  demoTextPrefab: {fileID: 7954509955600589612, guid: f34bb141bca48495dab1627a807172cf,
-    type: 3}
-  glbFilePath: SolarSystem/SolarSystem.glb
+  spawnDistance: 0

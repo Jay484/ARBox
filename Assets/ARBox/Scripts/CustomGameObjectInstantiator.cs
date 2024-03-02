@@ -6,33 +6,44 @@ using UnityEngine;
 public class CustomGameObjectInstantiator : GameObjectInstantiator
 {
     GameObject infoPrefab;
-    public CustomGameObjectInstantiator(GltfImport gltf, Transform parent, GameObject infoPrefab) : base(gltf, parent)
+    GLBData gLBData;
+    
+    public CustomGameObjectInstantiator(GltfImport gltf, Transform parent, GameObject infoPrefab, GLBData gLBData) : base(gltf, parent)
     {
         //gltfImport = gltf;
         this.infoPrefab = infoPrefab;
+        this.gLBData = gLBData;
     }
 
     public override void AddPrimitive(uint nodeIndex, string meshName, MeshResult meshResult, uint[] joints = null, uint? rootJoint = null, float[] morphTargetWeights = null, int primitiveNumeration = 0)
     {
         base.AddPrimitive(nodeIndex, meshName, meshResult, joints, rootJoint, morphTargetWeights, primitiveNumeration);
         var currGameObject = m_Nodes[nodeIndex];
+
+        DebugDjay.Log(meshName);
         SetupObject(currGameObject);
-        InitializeInfo(currGameObject);
+        if (gLBData == null)
+            return;
+        ObjectData objectData = gLBData.objects.Find((item) => item.mesh_name == meshName);
+        if(objectData != null)
+            InitializeInfo(currGameObject, infoPrefab, objectData);
 
     }
 
-    void InitializeInfo(GameObject parent)
+    public static void InitializeInfo(GameObject parent,GameObject infoPrefab,ObjectData objectData, bool isInfoActive = false)
     {
-        var info = Object.Instantiate(infoPrefab, parent.transform);
+        var info = Object.Instantiate(infoPrefab);
+        var infoScale = new Vector3(.05f, .05f, .05f);
+        info.transform.localScale = infoScale;
         info.name = InfoObjectName;
 
-
-        //Set position of info textbox
         var parentBounds = BoundsUtil.GetBounds(parent);
-        var offset = new Vector3(0, 2, 0);
+        var offset = new Vector3(0, 0, 0);
         var parentTopPosition = new Vector3(parentBounds.center.x, parentBounds.max.y, parentBounds.center.z);
         info.transform.localPosition = parentTopPosition + offset;
-        info.transform.localScale = BoundsUtil.GlobalToLocalScale(parent.transform, new Vector3(1f, 1f, 1f));
+
+        //Set position of info textbox
+        //info.transform.localScale = BoundsUtil.GlobalToLocalScale(parent.transform,infoScale);
         var textBox = info.GetComponent<TextMeshPro>();
         if (textBox == null)
         {
@@ -40,9 +51,13 @@ public class CustomGameObjectInstantiator : GameObjectInstantiator
         }
         else
         {
-            textBox.text = "Test Object";
+            textBox.text = objectData.info;
         }
-        info.SetActive(false);
+
+
+        info.transform.SetParent(parent.transform);
+
+        info.SetActive(isInfoActive);
     }
 
     private void SetupObject(GameObject gameObject)
