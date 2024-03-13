@@ -5,4 +5,10 @@ public class DebugDjay
     {
         Debug.Log("testJay: " + message);
     }
+
+    public static void Error(string message)
+    {
+        Debug.LogError("testJay: "+message);
+    }
+
 }

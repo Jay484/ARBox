@@ -6,9 +6,9 @@ using UnityEngine;
 public class CustomGameObjectInstantiator : GameObjectInstantiator
 {
     GameObject infoPrefab;
-    GLBData gLBData;
+    GLBObject gLBData;
     
-    public CustomGameObjectInstantiator(GltfImport gltf, Transform parent, GameObject infoPrefab, GLBData gLBData) : base(gltf, parent)
+    public CustomGameObjectInstantiator(GltfImport gltf, Transform parent, GameObject infoPrefab, GLBObject gLBData) : base(gltf, parent)
     {
         //gltfImport = gltf;
         this.infoPrefab = infoPrefab;

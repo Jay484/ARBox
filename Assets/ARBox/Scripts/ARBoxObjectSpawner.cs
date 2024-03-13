@@ -39,13 +39,14 @@ public class ARBoxObjectSpawner
         //}
     }
 
-    public async void SpawnObject(GLBModelUtil gLBModel, float spawnDistance, GameObject demoTextPrefab)
+    public async void SpawnObject(GLBModelData gLBModel, float spawnDistance, GameObject demoTextPrefab)
     {
         DebugDjay.Log(gLBModel.GetGLBModelPath());
         Vector3 spawnPosition = Camera.main.transform.position + Camera.main.transform.forward * spawnDistance;
         Vector3 desiredScale = new(.05f, .05f, .05f); // Desired scale of the object
 
-        var ActiveObject = new GameObject();
+        var ActiveObject = new GameObject(gLBModel.modelName);
+        ActiveObject.layer &= 3;
         // Set the object's new scale
 
 
@@ -77,7 +78,11 @@ public class ARBoxObjectSpawner
 
     public bool isRayHittingObject(float spawnDistance)
     {
+        DebugDjay.Log(glbLayerMask.ToString());
         var cameraTransform = Camera.main.transform;
-        return Physics.Raycast(cameraTransform.position, cameraTransform.forward, spawnDistance);
+        return Physics.Raycast(cameraTransform.position, cameraTransform.forward, spawnDistance, glbLayerMask);
     }
+
+    public static int glbLayerMask = LayerMask.GetMask("GLBObject");
+    public static int nonGlbLayerMask = LayerMask.GetMask("NonGLBObjects");
 }
