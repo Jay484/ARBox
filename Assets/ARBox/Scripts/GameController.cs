@@ -124,6 +124,10 @@ public class GameController : MonoBehaviour
                     aRBoxObjectSpawner.SpawnObject(glbModel, spawnDistance, textPrefab);
                     glbModel = null;
                 }
+                else
+                {
+                    DebugDjay.Error("No glbmodel set");
+                }
             }
             else
             {

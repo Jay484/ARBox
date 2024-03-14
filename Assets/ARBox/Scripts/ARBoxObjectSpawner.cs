@@ -46,7 +46,7 @@ public class ARBoxObjectSpawner
         Vector3 desiredScale = new(.05f, .05f, .05f); // Desired scale of the object
 
         var ActiveObject = new GameObject(gLBModel.modelName);
-        ActiveObject.layer &= 3;
+        ActiveObject.layer = glbLayerMask;
         // Set the object's new scale
 
 
