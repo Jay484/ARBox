@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour
     [SerializeField]
     GameObject textPrefab;
 
-    private Transform mainCameraTransform;
+    //private Transform mainCameraTransform;
 
     [HideInInspector]
     public GameObject highlightedGameObject = null;
@@ -16,17 +16,22 @@ public class GameController : MonoBehaviour
     public GameObject selectedGameObject = null;
 
     private ARBoxObjectSpawner aRBoxObjectSpawner;
-    private GLBModelUtil glbModel = null;
+    private GLBModelData glbModel = null;
 
     public float spawnDistance = 0f;
+    private Ray ray = new();
+    private Camera mainCamera;
+    private Transform mainCameraTransform;
+    // Create a RaycastHit variable to store information about the hit
+    RaycastHit hit;
 
     // Start is called before the first frame update
     void Start()
     {
-        mainCameraTransform = Camera.main.transform;
-        transform.parent = mainCameraTransform;
+        mainCamera = Camera.main;
+        transform.parent = mainCamera.transform;
         aRBoxObjectSpawner = new();
-        glbModel = new GLBModelUtil("SolarSystem");
+        ray = new(Camera.main.transform.position, transform.forward);
     }
 
     // Update is called once per frame
@@ -35,11 +40,10 @@ public class GameController : MonoBehaviour
         // Define the ray origin and direction
         // Use the current object's position as the origin
         // Use the forward direction of the object (you can adjust this based on your needs)
-        Ray ray = new(Camera.main.transform.position, transform.forward);
+        mainCameraTransform = mainCamera.transform;
+        ray.origin = mainCameraTransform.position;
+        ray.direction = mainCameraTransform.forward;
         Debug.DrawLine(ray.origin, ray.direction*10, Color.blue);
-
-        // Create a RaycastHit variable to store information about the hit
-        RaycastHit hit;
 
         // Perform the raycast
         if (Physics.Raycast(ray, out hit))
@@ -118,7 +122,16 @@ public class GameController : MonoBehaviour
                 if (glbModel != null)
                 {
                     aRBoxObjectSpawner.SpawnObject(glbModel, spawnDistance, textPrefab);
+                    glbModel = null;
                 }
+                else
+                {
+                    DebugDjay.Error("No glbmodel set");
+                }
+            }
+            else
+            {
+                DebugDjay.Log("Hitting gameobject");
             }
         }
     }
@@ -131,10 +144,11 @@ public class GameController : MonoBehaviour
         }
 
         var textBox = CustomGameObjectInstantiator.GetTextBox(highlightedGameObject);
+        if (textBox == null)
+            return;
+        //var parentBounds = BoundsUtil.GetBounds(highlightedGameObject);
 
-        var parentBounds = BoundsUtil.GetBounds(highlightedGameObject);
-
-        DebugDjay.Log("Bounds: " + parentBounds.max.ToString());
+        //DebugDjay.Log("Bounds: " + parentBounds.max.ToString());
         textBox.transform.rotation = Camera.main.transform.rotation;
         //textBox.transform.localScale = BoundsUtil.GlobalToLocalScale(highlightedGameObject.transform, new Vector3(1f, 1f, 1f));
     }
@@ -148,11 +162,11 @@ public class GameController : MonoBehaviour
 
         var textBox = CustomGameObjectInstantiator.GetTextBox(selectedGameObject);
 
-        var parentBounds = BoundsUtil.GetBounds(selectedGameObject);
+        //var parentBounds = BoundsUtil.GetBounds(selectedGameObject);
 
-        DebugDjay.Log("Bounds: " + parentBounds.max.ToString());
-        var offset = new Vector3(0, 2, 0) + Camera.main.transform.up;
-        var parentTopPosition = new Vector3(parentBounds.center.x, parentBounds.max.y, parentBounds.center.z);
+        //DebugDjay.Log("Bounds: " + parentBounds.max.ToString());
+        //var offset = new Vector3(0, 2, 0) + Camera.main.transform.up;
+        //var parentTopPosition = new Vector3(parentBounds.center.x, parentBounds.max.y, parentBounds.center.z);
         //textBox.transform.localPosition = parentTopPosition + offset;
         textBox.transform.rotation = Camera.main.transform.rotation;
         //textBox.transform.localScale = BoundsUtil.GlobalToLocalScale(selectedGameObject.transform, new Vector3(1f, 1f, 1f));
@@ -236,17 +250,13 @@ public class GameController : MonoBehaviour
         if (renderer!=null && setHighLight)
         {
             float emissionIntensity = renderer.material.GetColor("emissiveFactor").b / Color.white.b;
-            DebugDjay.Log("focused before"+emissionIntensity);
             emissionIntensity += 2;
-            DebugDjay.Log("focused after" + emissionIntensity);
             renderer.material.SetColor("emissiveFactor", Color.white * emissionIntensity);
         }
         else
         {
             float emissionIntensity = renderer.material.GetColor("emissiveFactor").b / Color.white.b;
-            DebugDjay.Log("not before" + emissionIntensity);
             emissionIntensity -= 2;
-            DebugDjay.Log("not after" + emissionIntensity);
             renderer.material.SetColor("emissiveFactor", Color.white * emissionIntensity);
             
         }
@@ -265,6 +275,10 @@ public class GameController : MonoBehaviour
     }
 
 
-
+    public void GlbModelSelected(GLBModelData glbModel)
+    {
+        this.glbModel = glbModel;
+        DebugDjay.Log("Model changed to " + glbModel.modelName);
+    }
 
 }
