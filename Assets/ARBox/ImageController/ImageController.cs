@@ -13,6 +13,9 @@ public class ImageController : MonoBehaviour
     private GameObject imageControllerObject = null;
     private Ray ray = new();
     private RaycastHit hit;
+    [SerializeField] private Material greenMaterial;
+    [SerializeField] private Material redMaterial;
+
 
     private void OnEnable()
     {
@@ -29,7 +32,7 @@ public class ImageController : MonoBehaviour
         foreach (var trackedImage in obj.added)
         {
             imageControllerObject = Instantiate(imageControllerPrefab,trackedImage.transform);
-            imageControllerObject.transform.Rotate(new Vector3(453, 0, 0));
+            imageControllerObject.transform.Rotate(new Vector3(45, 0, 0));
             UpdateRay();
         }
         foreach (var trackedImage in obj.updated)
@@ -79,7 +82,8 @@ public class ImageController : MonoBehaviour
             return;
 
         Ray ray = new(imageControllerObject.transform.position, imageControllerObject.transform.forward);
-
+        DebugDjay.Log(lineRenderer.materials.Length);
+        lineRenderer.material = lineRenderer.materials[0];
         lineRenderer.SetPosition(0, ray.origin);
         lineRenderer.SetPosition(1, ray.GetPoint(100));
     }
@@ -95,15 +99,24 @@ public class ImageController : MonoBehaviour
     private void RayCollidingAt(Vector3 point)
     {
         lineRenderer.SetPosition(1, point);
-        lineRenderer.startColor = Color.red;
-        lineRenderer.endColor = Color.red;
+        lineRenderer.material = redMaterial;
     }
 
 
     private void RayNotColliding()
     {
         lineRenderer.SetPosition(1, ray.GetPoint(rayLength));
-        lineRenderer.startColor = Color.white;
-        lineRenderer.endColor = Color.white;
+        lineRenderer.material = greenMaterial;
     }
+
+    public bool IsRayCasting()
+    {
+        return lineRenderer.enabled;
+    }
+
+    public Ray GetRay()
+    {
+        return ray;
+    }
+
 }
