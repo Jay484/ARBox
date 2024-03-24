@@ -9,13 +9,19 @@ public class ImageController : MonoBehaviour
     [SerializeField] private ARTrackedImageManager aRTrackedImageManager;
     [SerializeField] private GameObject imageControllerPrefab;
     [SerializeField] private LineRenderer lineRenderer;
-    [SerializeField] private float rayLength = 20;
+    [SerializeField] private float DefaultRayLength = 20;
+    private float rayLength;
     private GameObject imageControllerObject = null;
     private Ray ray = new();
     private RaycastHit hit;
     [SerializeField] private Material greenMaterial;
     [SerializeField] private Material redMaterial;
 
+
+    private void Start()
+    {
+        ResetRayLength();
+    }
 
     private void OnEnable()
     {
@@ -105,6 +111,7 @@ public class ImageController : MonoBehaviour
 
     private void RayNotColliding()
     {
+        DebugDjay.Error("raylength " + rayLength);
         lineRenderer.SetPosition(1, ray.GetPoint(rayLength));
         lineRenderer.material = greenMaterial;
     }
@@ -117,6 +124,18 @@ public class ImageController : MonoBehaviour
     public Ray GetRay()
     {
         return ray;
+    }
+
+    public void SetRayLength(float length)
+    {
+        DebugDjay.Error("set raylength " + length);
+        rayLength = length;
+    }
+
+    public void ResetRayLength()
+    {
+        DebugDjay.Error("reset raylength " + DefaultRayLength);
+        rayLength = DefaultRayLength;
     }
 
 }

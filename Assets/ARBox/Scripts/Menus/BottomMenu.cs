@@ -31,7 +31,7 @@ public class BottomMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RayCastToHighlighMenuItem();
+        RayCastToHighlightMenuItem();
         
     }
 
@@ -73,7 +73,7 @@ public class BottomMenu : MonoBehaviour
         }
     }
 
-    private void RayCastToHighlighMenuItem()
+    private void RayCastToHighlightMenuItem()
     {
         if (imageController == null || !imageController.IsRayCasting())
         {
@@ -100,7 +100,7 @@ public class BottomMenu : MonoBehaviour
                     highLightedBottomMenuItem.GetComponent<BottomMenuItem>().Highlight();
                 }
             }
-            if (Keyboard.current.uKey.wasReleasedThisFrame)
+            if (ControllerKeyboardBinding.WasConfirmKeyReleasedThisFrame())
             {
                 gameController.GlbModelSelected(highLightedBottomMenuItem.GetComponent<BottomMenuItem>().GetGlbModelData());
             }

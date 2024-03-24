@@ -8,6 +8,11 @@ public class KeyBoardKey : MonoBehaviour
     MyKeyBoard keyBoard;
     KeyCode keyCode = KeyCode.None;
 
+    private void Start()
+    {
+        gameObject.AddComponent<MeshCollider>();
+    }
+
     private void OnEnable()
     {
         keyBoard = transform.parent.gameObject.GetComponent<MyKeyBoard>();

@@ -18,7 +18,7 @@ public class TestGLTFImport : MonoBehaviour
 
         //var abspath = "file://" + Application.streamingAssetsPath + "/" + glbfilepath;
         var abspath = gLBModel.GetGLBModelPath();
-        spawner.SpawnObject(gLBModel, spawnDistance, textPrefab);
+        //spawner.SpawnObject(gLBModel, spawnDistance, textPrefab);
     }
 
     // Update is called once per frame

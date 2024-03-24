@@ -308,4 +308,16 @@ public class MyKeyBoard : MonoBehaviour
         }
     }
 
+    void SetInputfield(TMP_InputField inputField)
+    {
+        this.inputField = inputField;
+        gameObject.SetActive(true);
+    }
+
+    void ResetInputfield()
+    {
+        this.inputField = null;
+        gameObject.SetActive(false);
+    }
+
 }

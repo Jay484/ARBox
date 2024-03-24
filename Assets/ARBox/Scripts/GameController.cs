@@ -19,11 +19,12 @@ public class GameController : MonoBehaviour
     private GLBModelData glbModel = null;
 
     public float spawnDistance = 0f;
-    private Ray ray = new();
     private Camera mainCamera;
     private Transform mainCameraTransform;
     // Create a RaycastHit variable to store information about the hit
     RaycastHit hit;
+
+    public ImageController imageController;
 
     // Start is called before the first frame update
     void Start()
@@ -31,7 +32,6 @@ public class GameController : MonoBehaviour
         mainCamera = Camera.main;
         transform.parent = mainCamera.transform;
         aRBoxObjectSpawner = new();
-        ray = new(Camera.main.transform.position, transform.forward);
     }
 
     // Update is called once per frame
@@ -41,12 +41,9 @@ public class GameController : MonoBehaviour
         // Use the current object's position as the origin
         // Use the forward direction of the object (you can adjust this based on your needs)
         mainCameraTransform = mainCamera.transform;
-        ray.origin = mainCameraTransform.position;
-        ray.direction = mainCameraTransform.forward;
-        Debug.DrawLine(ray.origin, ray.direction*10, Color.blue);
 
         // Perform the raycast
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(imageController.GetRay(), out hit, ARBoxObjectSpawner.glbLayerMask))
         {
             // A hit occurred. You can access information about the hit using the 'hit' variable.
             // For example, you can get the name of the object hit:
@@ -83,7 +80,8 @@ public class GameController : MonoBehaviour
             else if (Keyboard.current.dKey.isPressed)
             {
                 MoveBack(highlightedGameObject);
-            }else if (Keyboard.current.hKey.wasPressedThisFrame)
+            }
+            else if (ControllerKeyboardBinding.WasConfirmKeyPressedThisFrame())
             {
                 DebugDjay.Log("H key pressed");
                 ObjectSelected(currObject);
@@ -99,7 +97,7 @@ public class GameController : MonoBehaviour
                 Highlight(highlightedGameObject, false);
                 highlightedGameObject = null;
             }
-            if (Keyboard.current.hKey.wasPressedThisFrame)
+            if (ControllerKeyboardBinding.WasConfirmKeyReleasedThisFrame())
             {
                 ObjectSelected(null);
             }
@@ -114,20 +112,22 @@ public class GameController : MonoBehaviour
 
     private void SpawnObject()
     {
-        if (Keyboard.current.uKey.wasPressedThisFrame)
+        if (ControllerKeyboardBinding.WasConfirmKeyReleasedThisFrame() && imageController.IsRayCasting())
         {
             Debug.Log("testJaySpawn: u key pressed");
-            if (!aRBoxObjectSpawner.isRayHittingObject(spawnDistance))
+            if (!aRBoxObjectSpawner.isRayHittingObject(imageController.GetRay(), spawnDistance))
             {
                 if (glbModel != null)
                 {
-                    aRBoxObjectSpawner.SpawnObject(glbModel, spawnDistance, textPrefab);
+                    aRBoxObjectSpawner.SpawnObject(glbModel, imageController.GetRay().GetPoint(spawnDistance), textPrefab);
                     glbModel = null;
                 }
                 else
                 {
                     DebugDjay.Error("No glbmodel set");
                 }
+
+                imageController.ResetRayLength();
             }
             else
             {
@@ -278,6 +278,7 @@ public class GameController : MonoBehaviour
     public void GlbModelSelected(GLBModelData glbModel)
     {
         this.glbModel = glbModel;
+        imageController.SetRayLength(spawnDistance);
         DebugDjay.Log("Model changed to " + glbModel.modelName);
     }
 
