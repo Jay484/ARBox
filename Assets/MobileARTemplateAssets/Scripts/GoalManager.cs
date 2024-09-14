@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets;
 
 /// <summary>
 /// Onboarding goal to be achieved as part of the <see cref="GoalManager"/>.
@@ -108,12 +107,12 @@ public class GoalManager : MonoBehaviour
 
     [Tooltip("Object Spawner used to detect whether the spawning goal has been achieved.")]
     [SerializeField]
-    ObjectSpawner m_ObjectSpawner;
+    UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.ObjectSpawner m_ObjectSpawner;
 
     /// <summary>
     /// Object Spawner used to detect whether the spawning goal has been achieved.
     /// </summary>
-    public ObjectSpawner objectSpawner
+    public UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.ObjectSpawner objectSpawner
     {
         get => m_ObjectSpawner;
         set => m_ObjectSpawner = value;

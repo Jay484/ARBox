@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
@@ -9,13 +9,19 @@ public class ImageController : MonoBehaviour
     [SerializeField] private ARTrackedImageManager aRTrackedImageManager;
     [SerializeField] private GameObject imageControllerPrefab;
     [SerializeField] private LineRenderer lineRenderer;
-    [SerializeField] private float rayLength = 20;
+    [SerializeField] private float DefaultRayLength = 20;
+    private float rayLength;
     private GameObject imageControllerObject = null;
     private Ray ray = new();
     private RaycastHit hit;
     [SerializeField] private Material greenMaterial;
     [SerializeField] private Material redMaterial;
 
+
+    private void Start()
+    {
+        ResetRayLength();
+    }
 
     private void OnEnable()
     {
@@ -25,6 +31,11 @@ public class ImageController : MonoBehaviour
     private void OnDisable()
     {
         aRTrackedImageManager.trackedImagesChanged -= ImageFound;
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
     }
 
     private void ImageFound(ARTrackedImagesChangedEventArgs obj)
@@ -82,7 +93,7 @@ public class ImageController : MonoBehaviour
             return;
 
         Ray ray = new(imageControllerObject.transform.position, imageControllerObject.transform.forward);
-        DebugDjay.Log(lineRenderer.materials.Length);
+        DebugDjay.GetInstance().Log(lineRenderer.materials.Length);
         lineRenderer.material = lineRenderer.materials[0];
         lineRenderer.SetPosition(0, ray.origin);
         lineRenderer.SetPosition(1, ray.GetPoint(100));
@@ -116,7 +127,19 @@ public class ImageController : MonoBehaviour
 
     public Ray GetRay()
     {
+        //return new Ray(Camera.main.transform.position, Camera.main.transform.forward); //Debug ray
         return ray;
+    }
+
+    public void SetRayLength(float length)
+    {
+        rayLength = length;
+    }
+
+    public void ResetRayLength()
+    {
+        DebugDjay.GetInstance().Error("reset raylength " + DefaultRayLength);
+        rayLength = DefaultRayLength;
     }
 
 }

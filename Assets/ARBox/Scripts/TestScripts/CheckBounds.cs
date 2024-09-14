@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CheckBounds : MonoBehaviour
 {
@@ -29,7 +29,7 @@ public class CheckBounds : MonoBehaviour
     void Update()
     {
         //bounds = BoundsUtil.GetBounds(game);
-        //DebugDjay.Log(bounds.max.ToString());
+        //DebugDjay.GetInstance().Log(bounds.max.ToString());
         //top.transform.position = new Vector3(bounds.center.x, bounds.max.y + 1, bounds.center.z);
         //top.transform.rotation = Camera.main.transform.rotation;
         if(i++ % 100 == 0)

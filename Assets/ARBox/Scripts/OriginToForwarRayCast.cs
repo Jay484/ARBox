@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -69,7 +69,7 @@ public class OriginToForwarRayCast : MonoBehaviour
 
 
 
-            Debug.Log("testJay Ray hit: " + hitObjectName);
+            DebugDjay.GetInstance().Log("testJay Ray hit: " + hitObjectName);
 
             // You can also perform actions based on the hit, such as moving the hit object, triggering events, etc.
         }

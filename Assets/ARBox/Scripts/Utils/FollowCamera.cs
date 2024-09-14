@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FollowCamera : MonoBehaviour
 {
@@ -58,7 +58,7 @@ public class FollowCamera : MonoBehaviour
     //    if (IsPointInsideViewPort(viewportPoint))
     //    {
     //        targetPosition = currPosition;
-    //        DebugDjay.Log("Inside Viewport");
+    //        DebugDjay.GetInstance().Log("Inside Viewport");
     //    }
     //    targetPosition.z = mainCamera.transform.position.z + zDistance;
     //    // Smoothly move the object towards the target position
@@ -68,7 +68,7 @@ public class FollowCamera : MonoBehaviour
 
     private bool IsPointInsideViewPort(Vector3 viewportPoint)
     {
-        DebugDjay.Log("CurrViewPort: " + viewportPoint);
+        DebugDjay.GetInstance().Log("CurrViewPort: " + viewportPoint);
         return viewportPoint.x >= 0 && viewportPoint.x <= 1 &&
             viewportPoint.y >= 0 && viewportPoint.y <= 1 &&
             viewportPoint.z >= 0
@@ -108,7 +108,7 @@ public class FollowCamera : MonoBehaviour
     {
         bottomViewportPoint = new Vector3(0.5f, 0f, mainCamera.nearClipPlane);
         bottomScreenPoint = mainCamera.ViewportToScreenPoint(bottomViewportPoint);
-        DebugDjay.Log(bottomScreenPoint.ToString());
+        DebugDjay.GetInstance().Log(bottomScreenPoint.ToString());
         // Convert the screen coordinates to world space
         targetPosition = mainCamera.ScreenToWorldPoint(bottomScreenPoint);
         targetPosition.y += yOffset; // Add the yOffset

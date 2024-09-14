@@ -13,12 +13,12 @@ public class TestGLTFImport : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ARBoxObjectSpawner spawner = new();
+        ARBoxObjectSpawner spawner = ARBoxObjectSpawner.GetInstance();
         gLBModel = new("SolarSystem");
 
         //var abspath = "file://" + Application.streamingAssetsPath + "/" + glbfilepath;
         var abspath = gLBModel.GetGLBModelPath();
-        spawner.SpawnObject(gLBModel, spawnDistance, textPrefab);
+        //spawner.SpawnObject(gLBModel, spawnDistance, textPrefab);
     }
 
     // Update is called once per frame
