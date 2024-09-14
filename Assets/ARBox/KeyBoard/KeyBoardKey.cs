@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -260,7 +260,7 @@ public class KeyBoardKey : MonoBehaviour
             case 222:
                 return KeyCode.Quote;
             default:
-                Debug.LogWarning("JavaScript key code not mapped to Unity KeyCode: " + jsKeyCode);
+                DebugDjay.GetInstance().LogWarning("JavaScript key code not mapped to Unity KeyCode: " + jsKeyCode);
                 return KeyCode.None; // Return KeyCode.None for unmapped codes
         }
 

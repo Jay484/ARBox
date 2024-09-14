@@ -1,5 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 using GLTFast;
+using System.Threading.Tasks;
 
 public class ARBoxObjectSpawner
 {
@@ -16,12 +17,31 @@ public class ARBoxObjectSpawner
     //Vector3 rayDirection; // Use the forward direction of the object (you can adjust this based on your needs)
     //float spawnDistance = 1f;
 
-    private GltfImport gltf;
+    private static GltfImport gltf;
+    private static ARBoxObjectSpawner aRBoxObjectSpawner = null;
 
     // Start is called before the first frame update
-    public ARBoxObjectSpawner()
+    private ARBoxObjectSpawner()
     {
         gltf = new GltfImport();
+    }
+
+    public static ARBoxObjectSpawner GetInstance()
+    {
+        if (aRBoxObjectSpawner == null)
+        {
+            aRBoxObjectSpawner = new();
+            InitializeGltf();
+        }
+        return aRBoxObjectSpawner;
+    }
+
+    static async void InitializeGltf()
+    {
+        gltf = await Task.Run<GltfImport>(() =>
+        {
+            return new();
+        });
     }
 
     // Update is called once per frame
@@ -33,7 +53,7 @@ public class ARBoxObjectSpawner
 
         //if (Keyboard.current.uKey.wasPressedThisFrame)
         //{
-        //    Debug.Log("testJaySpawn: u key pressed");
+        //    DebugDjay.GetInstance().Log("testJaySpawn: u key pressed");
         //    if (!isRayHittingObject())
         //        SpawnObject(glbFilePath, spawnDistance, demoTextPrefab);
         //}
@@ -41,7 +61,7 @@ public class ARBoxObjectSpawner
 
     public async void SpawnObject(GLBModelData gLBModel,Vector3 spawnPosition, GameObject demoTextPrefab)
     {
-        DebugDjay.Log(gLBModel.GetGLBModelPath());
+        DebugDjay.GetInstance().Log(gLBModel.GetGLBModelPath());
         Vector3 desiredScale = new(.05f, .05f, .05f); // Desired scale of the object
 
         var ActiveObject = new GameObject(gLBModel.modelName);
@@ -51,9 +71,9 @@ public class ARBoxObjectSpawner
 
         ActiveObject.transform.localScale = desiredScale;
         ActiveObject.transform.position = spawnPosition;
-
-        gltf = new GltfImport();
         var glbData = await ObjectRepo.GetGlbData(gLBModel.GetGLBJsonPath());
+        if(gltf == null)
+            InitializeGltf();
         await gltf.Load(gLBModel.GetGLBModelPath());
         var instantiator = new CustomGameObjectInstantiator(gltf, ActiveObject.transform, demoTextPrefab, glbData);
         //var instantiator = new GameObjectInstantiator(gltf, ActiveObject.transform);
@@ -66,19 +86,52 @@ public class ARBoxObjectSpawner
                 legacyAnimation.wrapMode = WrapMode.Once;
                 legacyAnimation.Play();
             }
-            Debug.Log("testJay: Success creating object");
+            DebugDjay.GetInstance().Log("testJay: Success creating object");
         }
         else
         {
-            Debug.Log("testJay: Failed creating object");
+            DebugDjay.GetInstance().Log("testJay: Failed creating object");
         }
 
     }
 
-    public bool isRayHittingObject(Ray ray,float spawnDistance)
+    public async void SpawnObject(ModelModel model, Vector3 spawnPosition)
     {
-        DebugDjay.Log(glbLayerMask.ToString());
-        return Physics.Raycast(ray.origin, ray.direction, spawnDistance, glbLayerMask);
+        Vector3 desiredScale = new(.05f, .05f, .05f); // Desired scale of the object
+
+        var ActiveObject = new GameObject(model.name);
+        ActiveObject.layer = glbLayerMask;
+        // Set the object's new scale
+
+
+        ActiveObject.transform.localScale = desiredScale;
+        ActiveObject.transform.position = spawnPosition;
+
+        var gltfPath = await SketchfabRepo.GetGLTFFilePath(model.uid);
+        if (gltf == null)
+            InitializeGltf();
+        await gltf.Load(gltfPath);
+        var instantiator = new GameObjectInstantiator(gltf, ActiveObject.transform);
+        var success = await gltf.InstantiateMainSceneAsync(instantiator);
+        if (success)
+        {
+            var legacyAnimation = instantiator.SceneInstance.LegacyAnimation;
+            if (legacyAnimation != null)
+            {
+                legacyAnimation.wrapMode = WrapMode.Once;
+                legacyAnimation.Play();
+            }
+            DebugDjay.GetInstance().Log("testJay: Success creating object");
+        }
+        else
+        {
+            DebugDjay.GetInstance().Log("testJay: Failed creating object");
+        }
+    }
+
+    public bool isRayHittingGlbObject(Ray ray,float spawnDistance)
+    {
+        return Physics.Raycast(ray.origin, ray.direction, spawnDistance);
     }
 
     public static int glbLayerMask = LayerMask.GetMask("GLBObject");

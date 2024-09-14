@@ -26,6 +26,7 @@ public class ControllerKeyboardBinding
 
     public static bool WasAKeyPressedThisFrame()
     {
+        DebugDjay.GetInstance().Log("Key pressed");
         return Keyboard.current.hKey.wasPressedThisFrame;
     }
 
@@ -43,6 +44,7 @@ public class ControllerKeyboardBinding
 
     public static bool WasBKeyPressedThisFrame()
     {
+        DebugDjay.GetInstance().Log("Key pressed");
         return Keyboard.current.uKey.wasPressedThisFrame;
     }
 
@@ -60,6 +62,7 @@ public class ControllerKeyboardBinding
 
     public static bool WasXKeyPressedThisFrame()
     {
+        DebugDjay.GetInstance().Log("Key pressed");
         return Keyboard.current.yKey.wasPressedThisFrame;
     }
 
@@ -76,6 +79,7 @@ public class ControllerKeyboardBinding
 
     public static bool WasYKeyPressedThisFrame()
     {
+        DebugDjay.GetInstance().Log("Key pressed");
         return Keyboard.current.jKey.wasPressedThisFrame;
     }
 
@@ -93,6 +97,7 @@ public class ControllerKeyboardBinding
 
     public static bool WasUpKeyPressedThisFrame()
     {
+        DebugDjay.GetInstance().Log("Key pressed");
         return Keyboard.current.aKey.wasPressedThisFrame;
     }
 
@@ -110,6 +115,7 @@ public class ControllerKeyboardBinding
 
     public static bool WasDownKeyPressedThisFrame()
     {
+        DebugDjay.GetInstance().Log("Key pressed");
         return Keyboard.current.dKey.wasPressedThisFrame;
     }
 
@@ -127,6 +133,7 @@ public class ControllerKeyboardBinding
 
     public static bool WasLeftKeyPressedThisFrame()
     {
+        DebugDjay.GetInstance().Log("Key pressed");
         return Keyboard.current.xKey.wasPressedThisFrame;
     }
 
@@ -143,6 +150,7 @@ public class ControllerKeyboardBinding
 
     public static bool WasRightKeyPressedThisFrame()
     {
+        DebugDjay.GetInstance().Log("Key pressed");
         return Keyboard.current.wKey.wasPressedThisFrame;
     }
 

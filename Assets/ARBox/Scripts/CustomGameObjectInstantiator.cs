@@ -1,4 +1,4 @@
-using GLTFast;
+﻿using GLTFast;
 using TMPro;
 using UnityEngine;
 
@@ -20,7 +20,7 @@ public class CustomGameObjectInstantiator : GameObjectInstantiator
         base.AddPrimitive(nodeIndex, meshName, meshResult, joints, rootJoint, morphTargetWeights, primitiveNumeration);
         var currGameObject = m_Nodes[nodeIndex];
 
-        DebugDjay.Log(meshName);
+        DebugDjay.GetInstance().Log(meshName);
         SetupObject(currGameObject);
         if (gLBData == null)
             return;
@@ -47,7 +47,7 @@ public class CustomGameObjectInstantiator : GameObjectInstantiator
         var textBox = info.GetComponent<TextMeshPro>();
         if (textBox == null)
         {
-            DebugDjay.Log("Cant find textmesh");
+            DebugDjay.GetInstance().Log("Cant find textmesh");
         }
         else
         {
@@ -104,14 +104,14 @@ public class CustomGameObjectInstantiator : GameObjectInstantiator
     {
         base.AddPrimitive(nodeIndex, meshName, meshResult, joints, rootJoint, morphTargetWeights, primitiveNumeration);
         var currGameObject = m_Nodes[nodeIndex];
-        Debug.Log("testJay" + meshName) ;
+        DebugDjay.GetInstance().Log("testJay" + meshName) ;
 
         var info = Object.Instantiate(infoPrefab, currGameObject.transform);
         info.name = InfoObjectName;
         var textBox = info.GetComponent<TextMeshPro>();
         if (textBox == null)
         {
-            DebugDjay.Log("Cant find textmesh");
+            DebugDjay.GetInstance().Log("Cant find textmesh");
         }
         else
         {
@@ -122,7 +122,7 @@ public class CustomGameObjectInstantiator : GameObjectInstantiator
 
         currGameObject.AddComponent<MeshCollider>();
         var renderer = currGameObject.GetComponent<Renderer>();
-        DebugDjay.Log("renderer: " + renderer.ToString());
+        DebugDjay.GetInstance().Log("renderer: " + renderer.ToString());
         var baseTexture = renderer.material.GetTexture("baseColorTexture");
         if(!renderer.material.IsKeywordEnabled("_EMISSIVE") && baseTexture != null)
         {

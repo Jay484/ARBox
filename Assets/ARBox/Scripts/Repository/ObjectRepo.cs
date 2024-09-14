@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -6,14 +6,14 @@ public static class ObjectRepo
 {
     public static async Task<GLBObject> GetGlbData(string glbJsonPath)
     {
-        DebugDjay.Log("url: " + glbJsonPath);
+        DebugDjay.GetInstance().Log("url: " + glbJsonPath);
         var downloadHandler =  await HTTPRequest.SendGetRequestAsync(glbJsonPath);
         byte[] jsonData = downloadHandler.data;
 
         // Convert the byte array to a string
         string jsonGlbData = System.Text.Encoding.UTF8.GetString(jsonData);
 
-        DebugDjay.Log(jsonGlbData);
+        DebugDjay.GetInstance().Log(jsonGlbData);
         var glbData = JsonUtility.FromJson<GLBObject>(jsonGlbData);
         return glbData;
     }

@@ -68,6 +68,7 @@ public class BottomMenu : MonoBehaviour
                 var name = loadableGameobjectNamePrefix + i.ToString() + j.ToString();
                 var loadable = transform.Find(name).gameObject;
                 loadable.AddComponent<BottomMenuItem>();
+                loadable.AddComponent<HighlightableItem>();
                 loadables.Add(loadable);
             }
         }
@@ -91,13 +92,13 @@ public class BottomMenu : MonoBehaviour
             {
                 if (prevHitIndex != -1)
                 {
-                    highLightedBottomMenuItem.GetComponent<BottomMenuItem>().UnHighlight();
+                    highLightedBottomMenuItem.GetComponent<HighlightableItem>().UnHighlight();
                 }
                 prevHitIndex = hitIndex;
                 if (prevHitIndex != -1)
                 {
                     highLightedBottomMenuItem = loadables[prevHitIndex];
-                    highLightedBottomMenuItem.GetComponent<BottomMenuItem>().Highlight();
+                    highLightedBottomMenuItem.GetComponent<HighlightableItem>().Highlight();
                 }
             }
             if (ControllerKeyboardBinding.WasConfirmKeyReleasedThisFrame())
@@ -115,7 +116,7 @@ public class BottomMenu : MonoBehaviour
     {
         if (prevHitIndex != -1)
         {
-            highLightedBottomMenuItem.GetComponent<BottomMenuItem>().UnHighlight();
+            highLightedBottomMenuItem.GetComponent<HighlightableItem>().UnHighlight();
             highLightedBottomMenuItem = null;
             prevHitIndex = hitIndex = -1;
             hitObjectName = string.Empty;

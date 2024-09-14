@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class EyeViewResolutionSetup : MonoBehaviour
@@ -37,8 +35,8 @@ public class EyeViewResolutionSetup : MonoBehaviour
 
     private void OnEnable()
     {
-        //DebugDjay.Log(Display.main.systemHeight);
-        //DebugDjay.Log(Display.main.systemWidth);
+        //DebugDjay.GetInstance().Log(Display.main.systemHeight);
+        //DebugDjay.GetInstance().Log(Display.main.systemWidth);
         mainDisplay = Display.main;
         InitializeEyeViewRenderTexture();
         InitializeEyeViewScale();

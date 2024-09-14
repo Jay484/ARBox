@@ -5,21 +5,28 @@ public class BoundsUtil
 
     public static Bounds GetBounds(GameObject gameObject )
     {
+        var bounds = new Bounds(gameObject.transform.position, Vector3.zero);
+        Collider collider = gameObject.GetComponent<Collider>();
+        if (collider != null)
+        {
+            bounds =  collider.bounds;
+        }
         Renderer renderer = gameObject.GetComponent<Renderer>();
         if(renderer !=null)
         {
-            return renderer.bounds;
+            bounds = renderer.bounds;
         }
 
-        Debug.Log("Cant find renderer bound");
-
-        Collider collider = gameObject.GetComponent<Collider>();
-        if(collider != null)
+        if (gameObject.transform.childCount == 0)
         {
-            return collider.bounds;
+            return bounds;
         }
-
-        return new Bounds(gameObject.transform.position, Vector3.zero);
+        for (int i = 0; i < gameObject.transform.childCount; i++)
+        {
+            var childBounds = GetBounds(gameObject.transform.GetChild(i).gameObject);
+            bounds.Encapsulate(childBounds);
+        }
+        return bounds;
     }
 
 
@@ -33,6 +40,25 @@ public class BoundsUtil
         );
 
     }
+
+    public static Vector3 GetTopRight(GameObject gameObject)
+    {
+        Bounds parentBounds = GetBounds(gameObject);
+        var topRight = new Vector3(parentBounds.max.x, parentBounds.max.y, parentBounds.min.z);
+        if (gameObject.transform.childCount == 0)
+        {
+            return topRight;
+        }
+        for(int i =0; i < gameObject.transform.childCount; i++)
+        {
+            var childTopRight = GetTopRight(gameObject.transform.GetChild(i).gameObject);
+            topRight.x = Mathf.Max(topRight.x, childTopRight.x);
+            topRight.y = Mathf.Max(topRight.y, childTopRight.y);
+            topRight.z = Mathf.Min(topRight.z, childTopRight.z);
+        }
+        return topRight;
+    }
+
 }
 
 
@@ -73,7 +99,7 @@ public class CustomGameObjectInstantiator : GameObjectInstantiator
         var textBox = info.GetComponent<TextMeshPro>();
         if (textBox == null)
         {
-            DebugDjay.Log("Cant find textmesh");
+            DebugDjay.GetInstance().Log("Cant find textmesh");
         }
         else
         {

@@ -9,9 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 4755b35b590504809a7525fd2109c2e2
   - enabled: 0
-    path: Assets/Samples/XR Interaction Toolkit/2.5.2/AR Starter Assets/ARDemoScene.unity
-    guid: da4db6c21a88243878fecfe160c1be3b
-  - enabled: 0
     path: Assets/Scenes/TestScene.unity
     guid: 0c2027f8637704e088cb8487155a71fc
   m_configObjects:
